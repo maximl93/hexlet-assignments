@@ -85,7 +85,7 @@ public class PostsController {
             String name = context.formParam("name");
             String body = context.formParam("body");
             EditPostPage editPostPage = new EditPostPage(id, name, body, e.getErrors());
-            context.render("posts/edit.jte", model("page", editPostPage));
+            context.render("posts/edit.jte", model("page", editPostPage)).status(422);
         }
     }
     // END
