@@ -61,7 +61,7 @@ public class PostsController {
     public static void edit(Context context) {
         Long id = context.pathParamAsClass("id", Long.class).get();
         Post post = PostRepository.find(id).orElseThrow(() -> new NotFoundResponse("Post not found"));
-        EditPostPage editPostPage = new EditPostPage(post.getName(), post.getBody(), null);
+        EditPostPage editPostPage = new EditPostPage(post.getId(), post.getName(), post.getBody(), null);
         context.render("posts/edit.jte", model("page", editPostPage));
     }
 
@@ -81,9 +81,10 @@ public class PostsController {
             context.redirect(NamedRoutes.postsPath());
 
         } catch (ValidationException e) {
+            Long id = context.pathParamAsClass("id", Long.class).get();
             String name = context.formParam("name");
             String body = context.formParam("body");
-            EditPostPage editPostPage = new EditPostPage(name, body, e.getErrors());
+            EditPostPage editPostPage = new EditPostPage(id, name, body, e.getErrors());
             context.render("posts/edit.jte", model("page", editPostPage));
         }
     }
