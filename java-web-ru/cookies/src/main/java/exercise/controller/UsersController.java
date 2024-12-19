@@ -29,10 +29,8 @@ public class UsersController {
 
         UserRepository.save(newUser);
 
-
-
         ctx.cookie("token", token);
-        ctx.redirect(NamedRoutes.userPath((long) UserRepository.getEntities().size()));
+        ctx.redirect(NamedRoutes.userPath(newUser.getId()));
     }
 
     public static void show(Context ctx) {
