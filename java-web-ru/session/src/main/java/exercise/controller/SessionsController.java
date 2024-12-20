@@ -19,7 +19,7 @@ public class SessionsController {
 
     public static void build(Context context) {
 
-        LoginPage loginPage = new LoginPage(context.sessionAttribute("nickname"), context.sessionAttribute("error"));
+        LoginPage loginPage = new LoginPage(null, null);
         context.render("build.jte", model("page", loginPage));
     }
 
@@ -40,11 +40,9 @@ public class SessionsController {
             return;
         }
 
-        context.sessionAttribute("nickname", name);
-        context.sessionAttribute("error", "Wrong username or password");
-        LoginPage loginPage = new LoginPage(context.sessionAttribute("nickname"), context.sessionAttribute("error"));
+        LoginPage loginPage = new LoginPage(name, "Wrong username or password");
         context.render("build.jte", model("page", loginPage));
-        context.redirect(NamedRoutes.buildSessionPath());
+
     }
 
     public static void logout(Context context) {
