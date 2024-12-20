@@ -19,7 +19,7 @@ public class SessionsController {
 
     public static void build(Context context) {
 
-        LoginPage loginPage = new LoginPage(null, null);
+        LoginPage loginPage = new LoginPage(context.sessionAttribute("nickname"), context.sessionAttribute("error"));
         context.render("build.jte", model("page", loginPage));
     }
 
@@ -30,6 +30,9 @@ public class SessionsController {
 
         if (UsersRepository.existsByName(name)
                 && UsersRepository.findByName(name).get().getPassword().equals(encryptedPassword)) {
+            context.sessionAttribute("nickname", null);
+            context.sessionAttribute("error", null);
+
             context.sessionAttribute("loggedUser", name);
             MainPage mainPage = new MainPage(context.sessionAttribute("loggedUser"));
             context.render("index.jte", model("page", mainPage));
@@ -37,7 +40,9 @@ public class SessionsController {
             return;
         }
 
-        LoginPage loginPage = new LoginPage(name, " Wrong username or password");
+        context.sessionAttribute("nickname", name);
+        context.sessionAttribute("error", "Wrong username or password");
+        LoginPage loginPage = new LoginPage(context.sessionAttribute("nickname"), context.sessionAttribute("error"));
         context.render("build.jte", model("page", loginPage));
         context.redirect(NamedRoutes.buildSessionPath());
     }
