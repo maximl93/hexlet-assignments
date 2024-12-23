@@ -25,9 +25,7 @@ public class PostsController {
             String name = context.formParamAsClass("name", String.class)
                     .check(value -> value.length() >= 2, "Название поста должно быть не короче двух символов")
                     .get();
-            String body = context.formParamAsClass("body", String.class)
-                    .check(value -> value.length() >= 10, "Длина поста должна быть не короче 10 символов")
-                    .get();
+            String body = context.formParam("body");
 
             Post newPost = new Post(name, body);
             PostRepository.save(newPost);
