@@ -12,13 +12,17 @@ class App {
         LOGGER.setLevel(Level.INFO);
         MaxThread maxThread = new MaxThread(numbers);
         MinThread minThread = new MinThread(numbers);
-        maxThread.start();
         minThread.start();
+        LOGGER.log(Level.INFO, "Thread " + minThread.getName() + " started");
+        maxThread.start();
+        LOGGER.log(Level.INFO, "Thread " + maxThread.getName() + " started");
         try {
-            maxThread.join();
             minThread.join();
+            LOGGER.log(Level.INFO, "Thread " + minThread.getName() + " finished");
+            maxThread.join();
+            LOGGER.log(Level.INFO, "Thread " + maxThread.getName() + " finished");
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println("Thread has been interrupted");
         }
         return Map.of("min", minThread.getMinNumber(), "max", maxThread.getMaxNumber());
     }
