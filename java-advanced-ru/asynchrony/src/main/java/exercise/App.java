@@ -34,6 +34,12 @@ class App {
         });
 
         CompletableFuture<String> outcome = firstFile.thenCombine(secondFile, (first, second) -> {
+                    try {
+                        Path path = Files.createFile(getFullPath(path3));
+                        Files.writeString(path, first + " " + second);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     return first + " " + second;
                 })
                 .exceptionally(ex -> {
