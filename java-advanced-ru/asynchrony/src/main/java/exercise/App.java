@@ -17,43 +17,49 @@ class App {
     }
 
     public static CompletableFuture<String> unionFiles(String path1, String path2, String path3) {
+
+        System.out.println("reading first file");
         CompletableFuture<String> firstFile = CompletableFuture.supplyAsync(() -> {
+            String content = "";
             try {
-                return Files.readString(getFullPath(path1));
+                content = Files.readString(getFullPath(path1));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            return content;
         });
 
+        System.out.println("reading second file");
         CompletableFuture<String> secondFile = CompletableFuture.supplyAsync(() -> {
+            String content = "";
             try {
-                return Files.readString(getFullPath(path2));
+                content = Files.readString(getFullPath(path2));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            return content;
         });
 
-        CompletableFuture<String> outcome = firstFile.thenCombine(secondFile, (first, second) -> {
-                    try {
-                        Path path = Files.createFile(getFullPath(path3));
-                        Files.writeString(path, first + " " + second);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return first + " " + second;
-                })
-                .exceptionally(ex -> {
-                    System.out.println("Oops! We have an exception - " + ex.getMessage());
-                    return null;
-                });
-
-        return outcome;
+        System.out.println("writing result");
+        return firstFile.thenCombine(secondFile, (first, second) -> {
+            String result = first + second;
+            try {
+                Files.writeString(getFullPath(path3), result, StandardOpenOption.CREATE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return "ok";
+        }).exceptionally(ex -> {
+            System.out.println("Oops! We have an exception - " + ex.getMessage());
+            return null;
+        });
     }
     // END
 
     public static void main(String[] args) throws Exception {
         // BEGIN
-        unionFiles("src/main/resources/file1.txt", "src/main/resources/file2.txt", "src/main/resources/result.txt");
+        CompletableFuture<String> result = unionFiles("src/main/resources/file1.txt", "src/main/resources/file2.txt", "src/main/resources/result.txt");
+        result.get();
         // END
     }
 }
